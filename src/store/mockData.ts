@@ -1,4 +1,12 @@
-import type { AppState } from '../types';
+import type { AppState, SettingsState } from '../types';
+
+export const defaultSettings: SettingsState = {
+  loudAlarm: true,
+  voiceGuide: true,
+  locationSharing: 'emergency',
+  pushNotification: true,
+  smsUrgent: true,
+};
 
 export const initialMockState: AppState = {
   system: {

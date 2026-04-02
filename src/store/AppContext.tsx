@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import type { AppState, IncidentActionState, AuthState, SettingsState } from '../types';
-import { initialMockState, missingSuspectedMockState } from './mockData';
+import { initialMockState, missingSuspectedMockState, defaultSettings } from './mockData';
 import {
   defaultAuthState,
   getInitialSupabaseAuthState,
@@ -10,6 +10,12 @@ import {
   signOutFromSupabase,
   subscribeToSupabaseAuthChanges,
 } from '../lib/supabase';
+import {
+  loadSupabaseBootstrap,
+  persistIncidentPatch,
+  persistSettings,
+  persistUserStatus,
+} from '../lib/supabase-data';
 
 interface AppContextType {
   auth: AuthState;
@@ -28,14 +34,6 @@ interface AppContextType {
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
-
-const defaultSettings: SettingsState = {
-  loudAlarm: true,
-  voiceGuide: true,
-  locationSharing: 'emergency',
-  pushNotification: true,
-  smsUrgent: true,
-};
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [auth, setAuthState] = useState<AuthState>(defaultAuthState);
@@ -102,19 +100,61 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     await signOutFromSupabase();
     setAuthState(defaultAuthState);
     setAppState(initialMockState);
+    setSettings(defaultSettings);
   }, []);
 
+  useEffect(() => {
+    let disposed = false;
+
+    const syncData = async () => {
+      if (!authReady || !auth.isAuthenticated) {
+        if (!disposed) {
+          setAppState(initialMockState);
+          setSettings(defaultSettings);
+        }
+        return;
+      }
+
+      if (!isSupabaseConfigured) return;
+
+      try {
+        const bootstrap = await loadSupabaseBootstrap(auth);
+        if (!disposed) {
+          setAppState(bootstrap.appState);
+          setSettings(bootstrap.settings);
+        }
+      } catch {
+        if (!disposed) {
+          setAppState(initialMockState);
+          setSettings(defaultSettings);
+        }
+      }
+    };
+
+    void syncData();
+
+    return () => {
+      disposed = true;
+    };
+  }, [auth, authReady]);
+
   const updateSettings = useCallback((partial: Partial<SettingsState>) => {
-    setSettings(prev => ({ ...prev, ...partial }));
-  }, []);
+    setSettings(prev => {
+      const next = { ...prev, ...partial };
+      void persistSettings(auth, next).catch(() => undefined);
+      return next;
+    });
+  }, [auth]);
 
   const triggerMissingScenario = useCallback(() => {
     setAppState(missingSuspectedMockState);
-  }, []);
+    void persistUserStatus(auth, missingSuspectedMockState).catch(() => undefined);
+  }, [auth]);
 
   const triggerNormalScenario = useCallback(() => {
     setAppState(initialMockState);
-  }, []);
+    void persistUserStatus(auth, initialMockState).catch(() => undefined);
+  }, [auth]);
 
   const updateIncidentState = useCallback((incidentId: string, newState: IncidentActionState, memo?: string) => {
     setAppState(prev => ({
@@ -125,6 +165,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           : i
       ),
     }));
+    void persistIncidentPatch(incidentId, {
+      action_state: newState,
+      ...(memo !== undefined ? { caregiver_memo: memo } : {}),
+    }).catch(() => undefined);
   }, []);
 
   const markIncidentRead = useCallback((incidentId: string) => {
@@ -134,6 +178,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         i.id === incidentId ? { ...i, isRead: true } : i
       ),
     }));
+    void persistIncidentPatch(incidentId, { is_read: true }).catch(() => undefined);
   }, []);
 
   return (
