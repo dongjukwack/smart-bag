@@ -8,7 +8,7 @@
 | **버전** | 1.2.0 |
 | **플랫폼** | 모바일 웹앱 (iOS/Android 브라우저, PWA 확장 가능) |
 | **기술 스택** | React + TypeScript + Vite + Tailwind CSS v4 + Ant Design Mobile |
-| **현재 상태** | 프론트엔드 완성, 백엔드 DB 연동 대기 |
+| **현재 상태** | 프론트엔드 완성, Supabase Auth/DB 기본 연동 완료, 실시간 센서/알림 연동 대기 |
 
 ---
 
@@ -50,7 +50,7 @@
 
 ### 4.1 공통
 
-- [ ] 이메일/비밀번호 로그인 (현재: Mock, 서버 연동 시 실제 인증)
+- [x] 이메일/비밀번호 로그인 (Supabase Auth)
 - [x] 역할 선택 (고령자 / 보호자)
 - [x] 로그아웃
 
@@ -78,7 +78,6 @@
 - [x] 알림 수신 설정 (Switch, state 저장)
 - [x] 공유 범위 설정 (항상/위급시/끄기, state 저장)
 - [x] 도움말 (Collapse FAQ)
-- [x] 시나리오 전환 버튼 (데모용)
 - [x] 로그아웃 (Dialog 확인)
 
 #### 누락 알림 상세 (MissingAlertDetail)
@@ -110,7 +109,6 @@
 - [x] 대상자 관리 (정보 표시, 연결 추가)
 - [x] 위급 알림 설정 (Switch, state 저장)
 - [x] 사건 기록 내보내기 (CSV 다운로드)
-- [x] 시나리오 전환 (데모용)
 - [x] 로그아웃
 
 #### 사건 상세 (IncidentDetail)
@@ -187,7 +185,9 @@ AppContext
 
 ---
 
-## 7. 백엔드 연동 시 필요한 API
+## 7. 커스텀 백엔드 연동 시 필요한 API
+
+현재 구현은 Supabase Auth + Postgres 테이블을 사용한다. 아래 API 목록은 추후 별도 Spring Boot / Node.js 서버로 이전하거나 확장할 때 필요한 경계 정의다.
 
 | API | 메서드 | 설명 |
 |-----|--------|------|
@@ -209,12 +209,11 @@ AppContext
 
 | 우선순위 | 항목 |
 |---------|------|
-| 높음 | 백엔드 API 연동 (Spring Boot / Node.js) |
-| 높음 | JWT 인증 (현재 Mock) |
-| 높음 | 실시간 가방 센서 데이터 연동 (WebSocket 또는 Polling) |
+| 높음 | 프로필/연결 관계 UI를 DB 실데이터 기준으로 완전 전환 |
+| 높음 | 실시간 가방 센서 데이터 연동 (WebSocket, Realtime 또는 Polling) |
+| 높음 | 가방 소리 울리기 / 전화 / 음성안내 실제 기능 연결 |
 | 중간 | FCM Push 알림 연동 |
-| 중간 | TTS (Web Speech API 또는 외부 서비스) |
-| 중간 | 실제 전화 연결 (`tel:` 딥링크) |
+| 중간 | 서버 전용 API 계층 분리 (Spring Boot / Node.js) |
 | 낮음 | PWA 설치 지원 |
 | 낮음 | Google Maps API 교체 (현재 OpenStreetMap) |
 | 낮음 | 다국어 지원 (i18n) |

@@ -1,6 +1,6 @@
 # SmartBag — 개발 Task List
 
-> 기준일: 2026-04-03  
+> 기준일: 2026-04-03
 > 상태: `[x]` 완료 · `[/]` 진행중 · `[ ]` 미완
 
 ---
@@ -36,7 +36,7 @@
 - [x] 고령자 홈 (SeniorHome) — 상태카드, 긴급버튼, 메뉴
 - [x] 고령자 기록 (SeniorHistory) — 카드 클릭→상세, 읽음처리
 - [x] 고령자 기기 (SeniorDevice) — ProgressBar, Toast 피드백
-- [x] 고령자 설정 (SeniorSettings) — List, 시나리오전환, 로그아웃
+- [x] 고령자 설정 (SeniorSettings) — List, 계정 카드, 로그아웃
 - [x] 연결된 사용자 관리 (SeniorConnectedUsers)
 - [x] 알림 수신 설정 (SeniorAlertSettings) — Switch, state 저장
 - [x] 공유 범위 설정 (SeniorSharingSettings) — 3단계, state 저장
@@ -57,7 +57,7 @@
   - [x] 최근 알림 리스트
 - [x] 보호자 기기 (GuardianDevice) — 배터리, 위치
 - [x] 보호자 기록 (GuardianHistory) — 사건 목록, 상태 Tag
-- [x] 보호자 설정 (GuardianSettings) — 시나리오전환, 로그아웃
+- [x] 보호자 설정 (GuardianSettings) — 계정 카드, 로그아웃
 - [x] 대상자 관리 (GuardianTargetManagement)
 - [x] 위급 알림 설정 (GuardianAlertSettings) — Switch, state 저장
 - [x] 사건 기록 내보내기 (GuardianExportRecords) — CSV 실제 다운로드
@@ -91,36 +91,46 @@
 
 ---
 
-## ⬜ Phase 6 — 백엔드 연동 (미완성)
+## [/] Phase 6 — Supabase Auth / DB 연동 (진행중)
 
 ### 인증
-- [ ] JWT 로그인 API 연동 (`POST /auth/login`)
-- [ ] 토큰 갱신 (Refresh Token)
-- [ ] 로그인 상태 persist (localStorage)
+- [x] Supabase Auth 이메일/비밀번호 로그인
+- [x] 세션 복원 및 auth state 구독
+- [x] `profiles.role` fallback 기반 역할 판별
+- [ ] 회원가입/비밀번호 재설정 UX
+
+### 데이터베이스
+- [x] `supabase/schema.sql` 작성
+- [x] `profiles`, `care_links`, `device_states`, `user_statuses`, `incidents`, `app_settings` 테이블 생성
+- [x] RLS 정책 적용
+- [x] 고령자 첫 로그인 시 기본 row 자동 seed
+- [x] 설정 저장 DB 연동
+- [x] 사건 상태/메모/읽음 처리 DB 연동
+- [x] 누락/정상 시나리오 상태 DB 반영
+- [ ] 프로필/연결 관계 UI를 DB 데이터로 완전 치환
 
 ### 실시간 데이터
-- [ ] 가방 상태 폴링 또는 WebSocket 연동
+- [ ] Supabase Realtime 또는 Polling 연동
 - [ ] 배터리/연결 상태 실시간 업데이트
-- [ ] 누락 감지 시 자동 알림 트리거
+- [ ] 누락 감지 시 자동 사건 생성
 
-### 사건 관리
-- [ ] 사건 목록 API 연동 (`GET /incidents`)
-- [ ] 사건 상태 변경 API 연동 (`PATCH /incidents/:id`)
-- [ ] 읽음 처리 API 연동
-
-### 설정
-- [ ] 알림/공유 설정 서버 저장 (`PATCH /settings`)
-
-### 알림
+### 디바이스/알림 기능
+- [ ] 가방 상태 폴링 또는 센서 연동
+- [ ] 가방 소리 울리기 실제 기기 연동
 - [ ] FCM (Firebase Cloud Messaging) Push 알림
 - [ ] 보호자 SMS 수신 연동
+- [ ] 실제 전화 연결 (`tel:` 딥링크)
+- [ ] TTS (음성 안내) 연결
+
+### 배포
+- [x] GitHub 원격 저장소 푸시
+- [x] Render Blueprint (`render.yaml`) 작성
+- [x] Render 정적 사이트 배포
 
 ---
 
 ## ⬜ Phase 7 — 고도화 (선택)
 
-- [ ] TTS (음성 안내) — Web Speech API 또는 외부 서비스
-- [ ] 실제 전화 연결 (`tel:` 딥링크 + 기기 권한)
 - [ ] PWA (Progressive Web App) 설치 지원
 - [ ] Google Maps API 교체 (정밀 길찾기)
 - [ ] 다국어 지원 (i18n)
@@ -136,6 +146,9 @@ smartbag v2/
 │   ├── App.tsx                          # 라우팅
 │   ├── main.tsx                         # 진입점
 │   ├── index.css                        # 글로벌 스타일
+│   ├── lib/
+│   │   ├── supabase.ts                  # Supabase auth
+│   │   └── supabase-data.ts             # DB 읽기/쓰기/bootstrap
 │   ├── types/
 │   │   └── index.ts                     # 타입 정의
 │   ├── store/
@@ -143,7 +156,9 @@ smartbag v2/
 │   │   ├── mockData.ts                  # Mock 데이터
 │   │   └── ScenarioTester.tsx          # 데모용 시나리오 전환
 │   ├── components/
-│   │   └── BottomNav.tsx               # 하단 탭바
+│   │   ├── BottomNav.tsx               # 하단 탭바
+│   │   ├── RowActionCard.tsx           # 공통 메뉴 카드
+│   │   └── AccountSummaryCard.tsx      # 설정 계정 요약 카드
 │   └── pages/
 │       ├── Login/
 │       │   └── RoleSelection.tsx
@@ -163,6 +178,9 @@ smartbag v2/
 │       │   └── IncidentDetail.tsx
 │       └── Shared/
 │           └── IncidentMapViewer.tsx
+├── supabase/
+│   └── schema.sql                       # Supabase 스키마 / RLS
+├── render.yaml                          # Render Blueprint
 ├── PRD.md                               # 제품 요구사항 문서
 ├── TASKS.md                             # 개발 태스크 목록 (이 파일)
 └── package.json
