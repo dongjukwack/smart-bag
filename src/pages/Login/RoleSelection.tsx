@@ -5,7 +5,7 @@ import { Button, Input, Toast } from 'antd-mobile';
 import { Backpack } from 'lucide-react';
 
 export const RoleSelection: React.FC = () => {
-  const { auth, authReady, loginWithPassword, setAuth } = useApp();
+  const { auth, authReady, loginWithPassword, loginAsMock } = useApp();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,7 +18,7 @@ export const RoleSelection: React.FC = () => {
   }, [auth.isAuthenticated, auth.role, authReady, navigate]);
 
   const handleLogin = (role: 'ELDER' | 'CAREGIVER') => {
-    setAuth({ isAuthenticated: true, role, accessToken: null, userId: null, email: null });
+    loginAsMock(role);
     Toast.show({ content: role === 'ELDER' ? '고령자 모드로 접속합니다' : '보호자 모드로 접속합니다', position: 'bottom' });
     navigate(role === 'ELDER' ? '/senior' : '/guardian');
   };

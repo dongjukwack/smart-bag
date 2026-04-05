@@ -19,12 +19,12 @@ import {
 
 interface AppContextType {
   auth: AuthState;
-  setAuth: (auth: AuthState) => void;
+  /** 개발 전용 모크 로그인 (Supabase 미세팅 시) */
+  loginAsMock: (role: 'ELDER' | 'CAREGIVER') => void;
   authReady: boolean;
   loginWithPassword: (email: string, password: string) => Promise<AuthState>;
   logout: () => Promise<void>;
   appState: AppState;
-  setAppState: (state: AppState) => void;
   settings: SettingsState;
   updateSettings: (partial: Partial<SettingsState>) => void;
   triggerMissingScenario: () => void;
@@ -42,8 +42,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [appState, setAppState] = useState<AppState>(initialMockState);
   const [settings, setSettings] = useState<SettingsState>(defaultSettings);
 
-  const setAuth = useCallback((nextAuth: AuthState) => {
-    setAuthState(nextAuth);
+  const loginAsMock = useCallback((role: 'ELDER' | 'CAREGIVER') => {
+    setAuthState({ isAuthenticated: true, role, accessToken: null, userId: null, email: null });
   }, []);
 
   useEffect(() => {
@@ -184,9 +184,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   return (
     <AppContext.Provider
       value={{
-        auth, setAuth,
+        auth, loginAsMock,
         authReady, loginWithPassword, logout,
-        appState, setAppState,
+        appState,
         settings, updateSettings,
         triggerMissingScenario, triggerNormalScenario,
         updateIncidentState, markIncidentRead,

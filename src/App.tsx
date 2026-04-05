@@ -2,18 +2,16 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useApp } from './store/AppContext';
 import { RoleSelection } from './pages/Login/RoleSelection';
-import { SeniorLayout } from './pages/Senior/SeniorLayout';
-import { SeniorHome } from './pages/Senior/SeniorHome';
-import { MissingAlertDetail } from './pages/Senior/MissingAlertDetail';
-import { SeniorSettings } from './pages/Senior/SeniorSettings';
-import { SeniorConnectedUsers, SeniorAlertSettings, SeniorSharingSettings, SeniorHelp } from './pages/Senior/SeniorSettingsPages';
-import { SeniorHistory } from './pages/Senior/SeniorHistory';
-import { SeniorDevice } from './pages/Senior/SeniorDevice';
-import { GuardianLayout } from './pages/Guardian/GuardianLayout';
-import { GuardianDashboard } from './pages/Guardian/GuardianDashboard';
-import { IncidentDetail } from './pages/Guardian/IncidentDetail';
-import { GuardianDevice, GuardianHistory, GuardianSettings } from './pages/Guardian/GuardianStubs';
-import { GuardianTargetManagement, GuardianAlertSettings, GuardianExportRecords } from './pages/Guardian/GuardianSettingsPages';
+import {
+  SeniorLayout, SeniorHome, SeniorHistory, SeniorDevice, SeniorSettings,
+  MissingAlertDetail, SeniorConnectedUsers, SeniorAlertSettings,
+  SeniorSharingSettings, SeniorHelp,
+} from './pages/Senior';
+import {
+  GuardianLayout, GuardianDashboard, GuardianDevice, GuardianHistory,
+  GuardianSettings, IncidentDetail, GuardianTargetManagement,
+  GuardianAlertSettings, GuardianExportRecords,
+} from './pages/Guardian';
 import { IncidentMapViewer } from './pages/Shared/IncidentMapViewer';
 
 const PrivateRoute = ({ children, allowedRole }: { children: React.ReactNode, allowedRole: 'ELDER' | 'CAREGIVER' }) => {

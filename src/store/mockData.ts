@@ -1,5 +1,9 @@
 import type { AppState, SettingsState } from '../types';
 
+// 하드코딩 방지: 사용자 표시 이름 중앙 관리 (실 DB 연동 시 제거)
+export const MOCK_ELDER_NAME = '김영수 님';
+export const MOCK_CAREGIVER_NAME = '동주 님';
+
 export const defaultSettings: SettingsState = {
   loudAlarm: true,
   voiceGuide: true,

@@ -5,6 +5,7 @@ import { NavBar, Dialog } from 'antd-mobile';
 import { User, Bell, Share2, HelpCircle, LogOut } from 'lucide-react';
 import { AccountSummaryCard } from '../../components/AccountSummaryCard';
 import { RowActionCard } from '../../components/RowActionCard';
+import { MOCK_ELDER_NAME } from '../../store/mockData';
 
 export const SeniorSettings: React.FC = () => {
   const { logout } = useApp();
@@ -32,7 +33,7 @@ export const SeniorSettings: React.FC = () => {
         {/* Profile Card */}
         <AccountSummaryCard
           label="내 계정"
-          name="김영수 님"
+          name={MOCK_ELDER_NAME}
           accent="emerald"
         />
 

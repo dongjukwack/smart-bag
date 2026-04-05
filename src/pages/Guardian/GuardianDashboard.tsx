@@ -4,6 +4,7 @@ import { useApp } from '../../store/AppContext';
 import { Card, Button, Tag, ProgressBar } from 'antd-mobile';
 import { AlertTriangle, CheckCircle2, Battery, BarChart3, ArrowUpRight, Wifi, WifiOff } from 'lucide-react';
 import { RowActionCard } from '../../components/RowActionCard';
+import { MOCK_ELDER_NAME } from '../../store/mockData';
 
 export const GuardianDashboard: React.FC = () => {
   const { appState } = useApp();
@@ -20,7 +21,7 @@ export const GuardianDashboard: React.FC = () => {
       <div className="flex flex-col gap-3">
         <p className="text-base text-gray-400 font-medium">안녕하세요 보호자님</p>
         <h1 className="text-[28px] font-extrabold text-gray-900 leading-tight">
-          김영수 님 모니터링
+          {MOCK_ELDER_NAME} 모니터링
         </h1>
       </div>
 

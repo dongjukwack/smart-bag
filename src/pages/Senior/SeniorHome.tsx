@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, Button, Tag } from 'antd-mobile';
 import { AlertTriangle, CheckCircle2, Wifi } from 'lucide-react';
 import { RowActionCard } from '../../components/RowActionCard';
+import { MOCK_ELDER_NAME } from '../../store/mockData';
 
 export const SeniorHome: React.FC = () => {
   const { appState } = useApp();
@@ -18,7 +19,7 @@ export const SeniorHome: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col gap-4">
         <h1 className="text-[28px] font-extrabold text-gray-900 leading-tight">
-          안녕하세요,<br />김영수 님
+          안녕하세요,<br />{MOCK_ELDER_NAME}
         </h1>
         <Tag
           className="status-connection-pill"
